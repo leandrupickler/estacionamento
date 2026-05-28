@@ -17,19 +17,6 @@
   ],
   "vehicles": [
     {
-      "id": "vehicle_abc1d23",
-      "plate": "ABC1D23",
-      "ownerName": "João da Silva",
-      "ownerPhone": "(48) 99999-0001",
-      "carColor": "Prata",
-      "carModel": "Volkswagen Gol",
-      "course": "Análise e Desenvolvimento de Sistemas",
-      "phase": "1ª Fase",
-      "notes": "Cadastro de teste.",
-      "createdAt": "2026-05-27T09:00:00.000Z",
-      "updatedAt": "2026-05-27T09:00:00.000Z"
-    },
-    {
       "id": "vehicle_bra2e45",
       "plate": "BRA2E45",
       "ownerName": "Maria Oliveira",
