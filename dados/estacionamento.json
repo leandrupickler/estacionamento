@@ -17,19 +17,6 @@
   ],
   "vehicles": [
     {
-      "id": "vehicle_bra2e45",
-      "plate": "BRA2E45",
-      "ownerName": "Maria Oliveira",
-      "ownerPhone": "(48) 98888-0002",
-      "carColor": "Branco",
-      "carModel": "Hyundai HB20",
-      "course": "Pedagogia",
-      "phase": "3ª Fase",
-      "notes": "Cadastro de teste.",
-      "createdAt": "2026-05-27T10:00:00.000Z",
-      "updatedAt": "2026-05-28T01:02:58.664Z"
-    },
-    {
       "id": "vehicle_fmp2026",
       "plate": "FMP2026",
       "ownerName": "Carlos Santos",
