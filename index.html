@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estacionamento FMP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <style>
+    :root {
+      --blue: #4285F4;
+      --red: #EA4335;
+      --yellow: #FBBC05;
+      --green: #34A853;
+      --bg: #f6f8fc;
+      --card: #ffffff;
+      --text: #202124;
+      --muted: #5f6368;
+      --border: #e8eaed;
+      --shadow: 0 8px 28px rgba(60, 64, 67, 0.12), 0 1px 4px rgba(60, 64, 67, 0.10);
+      --shadow-soft: 0 4px 18px rgba(60, 64, 67, 0.10);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(66, 133, 244, 0.14), transparent 34%),
+        radial-gradient(circle at top right, rgba(52, 168, 83, 0.12), transparent 32%),
+        var(--bg);
+      color: var(--text);
+      font-family: "Poppins", "Roboto", Arial, sans-serif;
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { border: none; cursor: pointer; }
+    .hidden { display: none !important; }
+
+    .login-screen {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .login-card {
+      width: min(720px, 100%);
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      border-radius: 32px;
+      box-shadow: var(--shadow);
+      padding: 30px;
+      backdrop-filter: blur(18px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-card::before, .card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--blue), var(--red), var(--yellow), var(--green));
+    }
+
+    .login-logo, .brand-logo {
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 900;
+      overflow: hidden;
+      background: linear-gradient(135deg, var(--blue), var(--green));
+      box-shadow: 0 14px 28px rgba(66, 133, 244, 0.25);
+    }
+
+    .login-logo { width: 82px; height: 82px; margin: 0 auto 18px; border-radius: 24px; font-size: 28px; }
+    .brand-logo { width: 62px; height: 62px; border-radius: 20px; flex: 0 0 auto; font-size: 22px; }
+    .login-logo img, .brand-logo img, .preview-box img { width: 100%; height: 100%; object-fit: cover; }
+
+    .login-card h1 { margin: 0; text-align: center; font-size: 1.7rem; }
+    .login-card > p { text-align: center; color: var(--muted); margin: 8px 0 22px; }
+
+    .container { max-width: 1480px; margin: 0 auto; padding: 24px; }
+
+    .topbar {
+      position: sticky;
+      top: 14px;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 18px;
+      border-radius: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      background: rgba(255, 255, 255, 0.84);
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .brand { display: flex; align-items: center; gap: 14px; min-width: 0; }
+    .brand h1 { margin: 0; font-size: clamp(1.25rem, 2.2vw, 1.9rem); line-height: 1.05; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .brand p { margin: 5px 0 0; color: var(--muted); font-size: 0.9rem; }
+    .tabs { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+
+    .tab-btn, .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      transition: 0.18s ease;
+      text-decoration: none;
+    }
+
+    .tab-btn:hover, .btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-soft); }
+    .tab-btn.active { color: #fff; background: var(--blue); border-color: var(--blue); box-shadow: 0 8px 18px rgba(66, 133, 244, 0.28); }
+    .btn-primary { color: #fff; background: var(--blue); border-color: var(--blue); }
+    .btn-success { color: #fff; background: var(--green); border-color: var(--green); }
+    .btn-danger { color: #fff; background: var(--red); border-color: var(--red); }
+    .btn-warning { color: #2b2100; background: var(--yellow); border-color: var(--yellow); }
+    .btn-light { color: var(--muted); background: #f8fafd; }
+    .btn-sm { min-height: 34px; padding: 8px 12px; font-size: 0.84rem; }
+
+    main { margin-top: 22px; }
+    .page { display: none; }
+    .page.active { display: block; animation: fadeIn 0.18s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    .section-title { display: flex; justify-content: space-between; align-items: flex-end; gap: 14px; margin: 24px 0 14px; }
+    .section-title h2 { margin: 0; font-size: 1.28rem; }
+    .section-title p { margin: 5px 0 0; color: var(--muted); }
+
+    .grid { display: grid; gap: 18px; }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      padding: 20px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(232, 234, 237, 0.9);
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    .dashboard-filter, .github-panel {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: end;
+      gap: 12px;
+      padding: 16px;
+      margin-bottom: 18px;
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.78);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .github-panel { display: block; margin-top: 18px; background: #f8fafd; }
+    .dashboard-filter .field { min-width: 220px; }
+
+    .filter-badge, .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(66, 133, 244, 0.10);
+      color: var(--blue);
+      font-size: 0.86rem;
+      font-weight: 700;
+    }
+
+    .sync-badge.ok { background: rgba(52, 168, 83, 0.12); color: var(--green); }
+    .sync-badge.warn { background: rgba(251, 188, 5, 0.18); color: #8a6500; }
+    .sync-badge.error { background: rgba(234, 67, 53, 0.12); color: var(--red); }
+
+    .stat-card { min-height: 128px; display: flex; flex-direction: column; justify-content: space-between; }
+    .stat-head { display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 0.9rem; }
+    .icon { width: 42px; height: 42px; border-radius: 14px; display: grid; place-items: center; background: rgba(66, 133, 244, 0.12); color: var(--blue); flex: 0 0 auto; }
+    .icon.red { background: rgba(234, 67, 53, 0.12); color: var(--red); }
+    .icon.yellow { background: rgba(251, 188, 5, 0.18); color: #8a6500; }
+    .icon.green { background: rgba(52, 168, 83, 0.12); color: var(--green); }
+    .stat-value { margin-top: 16px; font-size: clamp(1.35rem, 2.8vw, 2rem); font-weight: 800; letter-spacing: -0.04em; }
+    .stat-note { margin: 5px 0 0; color: var(--muted); font-size: 0.84rem; }
+
+    form { display: grid; gap: 14px; }
+    .form-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+    .form-row.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .form-row.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .field { display: grid; gap: 6px; }
+    label { color: #3c4043; font-size: 0.86rem; font-weight: 700; }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 13px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      outline: none;
+      background: #fff;
+      color: var(--text);
+      transition: 0.18s ease;
+    }
+
+    textarea { min-height: 86px; resize: vertical; }
+    input:focus, select:focus, textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(66, 133, 244, 0.12); }
+    .form-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 10px; margin-top: 2px; }
+    .muted { color: var(--muted); }
+    .mini { font-size: 0.82rem; }
+
+    .table-wrap { overflow-x: auto; border-radius: 18px; border: 1px solid var(--border); background: #fff; }
+    table { width: 100%; min-width: 1060px; border-collapse: collapse; }
+    th, td { padding: 13px 14px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; }
+    th { background: #f8fafd; color: #3c4043; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    tr:last-child td { border-bottom: none; }
+    .td-actions { display: flex; justify-content: flex-end; gap: 8px; min-width: 170px; }
+
+    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px; border-radius: 999px; background: #f1f4f9; color: var(--muted); font-size: 0.8rem; font-weight: 600; }
+    .pill.blue { background: rgba(66, 133, 244, 0.12); color: var(--blue); }
+    .pill.red { background: rgba(234, 67, 53, 0.12); color: var(--red); }
+    .pill.yellow { background: rgba(251, 188, 5, 0.18); color: #8a6500; }
+    .pill.green { background: rgba(52, 168, 83, 0.12); color: var(--green); }
+    .plate-tag { display: inline-flex; align-items: center; justify-content: center; padding: 7px 12px; min-width: 92px; border-radius: 10px; border: 2px solid #111827; background: #fff; color: #111827; font-weight: 900; letter-spacing: 0.06em; font-family: "Roboto", Arial, sans-serif; }
+
+    .empty { padding: 28px; border: 1px dashed #cfd5df; border-radius: 22px; background: rgba(255, 255, 255, 0.72); text-align: center; color: var(--muted); }
+    .empty i { display: block; margin-bottom: 10px; color: var(--blue); font-size: 2rem; }
+    .ranking { display: grid; gap: 10px; }
+    .rank-row { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 12px; border: 1px solid var(--border); border-radius: 16px; background: #fff; }
+    .rank-bar { height: 9px; border-radius: 999px; background: #edf1f7; overflow: hidden; margin-top: 8px; }
+    .rank-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--blue), var(--green)); }
+
+    .preview-box { display: grid; place-items: center; width: 96px; height: 96px; border-radius: 22px; border: 1px dashed #cfd5df; background: #f1f4f9; overflow: hidden; color: var(--muted); font-weight: 700; flex: 0 0 auto; }
+    .file-row { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; }
+    .security-note { padding: 14px; border-radius: 16px; border: 1px solid rgba(234, 67, 53, 0.18); background: rgba(234, 67, 53, 0.07); color: #7a2019; font-size: 0.86rem; line-height: 1.55; }
+    .info-note { padding: 14px; border-radius: 16px; border: 1px solid rgba(66, 133, 244, 0.18); background: rgba(66, 133, 244, 0.07); color: #174ea6; font-size: 0.86rem; line-height: 1.55; }
+    .footer { margin: 22px 0 0; text-align: center; color: var(--muted); font-size: 0.82rem; }
+    .toast { position: fixed; right: 24px; bottom: 24px; z-index: 999; max-width: min(480px, calc(100vw - 48px)); padding: 12px 16px; border-radius: 16px; background: #202124; color: #fff; box-shadow: var(--shadow); opacity: 0; transform: translateY(12px); pointer-events: none; transition: 0.2s ease; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 1120px) {
+      .topbar { position: static; flex-direction: column; align-items: flex-start; }
+      .tabs { justify-content: flex-start; }
+      .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
+      .form-row, .form-row.two, .form-row.three { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 680px) {
+      .container { padding: 14px; }
+      .topbar, .card, .login-card { border-radius: 20px; }
+      .brand h1 { white-space: normal; }
+      .tab-btn { flex: 1 1 auto; }
+      .form-actions { justify-content: flex-start; }
+      .dashboard-filter .field { min-width: 100%; }
+    }
+  </style>
+</head>
+
+<body>
+  <section id="loginScreen" class="login-screen">
+    <article class="login-card">
+      <div class="login-logo" id="loginLogo">EF</div>
+      <h1 id="loginTitle">Estacionamento FMP</h1>
+      <p>Acesso restrito aos usuários autorizados.</p>
+
+      <div class="sync-badge warn" id="loginSyncStatus">
+        <i class="fa-brands fa-github"></i>
+        GitHub não configurado
+      </div>
+
+      <form id="loginForm" style="margin-top:18px;">
+        <div class="field">
+          <label for="loginUser">Usuário</label>
+          <input id="loginUser" type="text" autocomplete="username" required>
+        </div>
+
+        <div class="field">
+          <label for="loginPassword">Senha</label>
+          <input id="loginPassword" type="password" autocomplete="current-password" required>
+        </div>
+
+        <button class="btn btn-primary" type="submit" style="width:100%; margin-top:8px;">
+          <i class="fa-solid fa-right-to-bracket"></i> Entrar
+        </button>
+      </form>
+
+      <div class="github-panel">
+        <h3 style="margin:0 0 10px;"><i class="fa-brands fa-github"></i> Conexão GitHub</h3>
+
+        <form id="githubLoginConfigForm">
+          <div class="form-row two">
+            <div class="field">
+              <label for="loginGithubOwner">Usuário/Organização do GitHub</label>
+              <input id="loginGithubOwner" type="text" placeholder="Ex.: leandropickler">
+            </div>
+
+            <div class="field">
+              <label for="loginGithubRepo">Repositório</label>
+              <input id="loginGithubRepo" type="text" value="estaciomento">
+            </div>
+          </div>
+
+          <div class="form-row two">
+            <div class="field">
+              <label for="loginGithubBranch">Branch</label>
+              <input id="loginGithubBranch" type="text" value="main">
+            </div>
+
+            <div class="field">
+              <label for="loginGithubPath">Arquivo de dados</label>
+              <input id="loginGithubPath" type="text" value="dados/estaciomento.json">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="loginGithubToken">Token GitHub</label>
+            <input id="loginGithubToken" type="password" placeholder="Cole aqui o Fine-grained Personal Access Token">
+            <span class="mini muted">O token fica salvo somente neste navegador. Não coloque o token dentro do código.</span>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit">
+              <i class="fa-solid fa-floppy-disk"></i> Salvar conexão
+            </button>
+
+            <button class="btn btn-light" type="button" id="loginLoadGithubBtn">
+              <i class="fa-solid fa-cloud-arrow-down"></i> Carregar dados
+            </button>
+          </div>
+        </form>
+      </div>
+    </article>
+  </section>
+
+  <div id="appShell" class="container hidden">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-logo" id="brandLogo">EF</div>
+        <div>
+          <h1 id="brandTitle">Estacionamento FMP</h1>
+          <p id="currentUserInfo">Cadastro de placas e proprietários vinculados aos cursos da FMP</p>
+        </div>
+      </div>
+
+      <nav class="tabs">
+        <button class="tab-btn active" data-tab="dashboard"><i class="fa-solid fa-chart-pie"></i> Dashboard</button>
+        <button class="tab-btn" data-tab="vehicles"><i class="fa-solid fa-car-side"></i> Veículos</button>
+        <button class="tab-btn" data-tab="settings"><i class="fa-solid fa-gear"></i> Configurações</button>
+        <button class="btn btn-light" id="reloadGithubBtn"><i class="fa-solid fa-rotate"></i> Atualizar</button>
+        <button class="btn btn-danger" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
+      </nav>
+    </header>
+
+    <main>
+      <section id="page-dashboard" class="page active">
+        <div class="section-title">
+          <div>
+            <h2>Painel do estacionamento</h2>
+            <p>Resumo dos veículos cadastrados e sincronizados com o arquivo JSON no GitHub.</p>
+          </div>
+        </div>
+
+        <div class="dashboard-filter">
+          <div class="field">
+            <label for="dashboardCourseFilter">Filtrar por curso</label>
+            <select id="dashboardCourseFilter"></select>
+          </div>
+
+          <div class="field">
+            <label for="dashboardPhaseFilter">Filtrar por fase</label>
+            <select id="dashboardPhaseFilter"></select>
+          </div>
+
+          <div class="filter-badge" id="filterBadge"><i class="fa-solid fa-filter"></i> Todos os cadastros</div>
+          <div class="sync-badge" id="syncStatusBadge"><i class="fa-brands fa-github"></i> Aguardando sincronização</div>
+        </div>
+
+        <div class="grid grid-4">
+          <article class="card stat-card">
+            <div class="stat-head"><span>Total de veículos</span><span class="icon"><i class="fa-solid fa-car"></i></span></div>
+            <div><div class="stat-value" id="totalVehicles">0</div><p class="stat-note">Placas cadastradas no JSON.</p></div>
+          </article>
+          <article class="card stat-card">
+            <div class="stat-head"><span>Cursos com veículos</span><span class="icon green"><i class="fa-solid fa-graduation-cap"></i></span></div>
+            <div><div class="stat-value" id="totalCourses">0</div><p class="stat-note">Cursos diferentes encontrados.</p></div>
+          </article>
+          <article class="card stat-card">
+            <div class="stat-head"><span>Fases registradas</span><span class="icon yellow"><i class="fa-solid fa-layer-group"></i></span></div>
+            <div><div class="stat-value" id="totalPhases">0</div><p class="stat-note">Fases diferentes no cadastro.</p></div>
+          </article>
+          <article class="card stat-card">
+            <div class="stat-head"><span>Cadastrados hoje</span><span class="icon red"><i class="fa-solid fa-calendar-day"></i></span></div>
+            <div><div class="stat-value" id="totalToday">0</div><p class="stat-note">Novos registros no dia atual.</p></div>
+          </article>
+        </div>
+
+        <div class="grid grid-2" style="margin-top:18px;">
+          <article class="card">
+            <h3 style="margin:0 0 14px;"><i class="fa-solid fa-chart-simple"></i> Veículos por curso</h3>
+            <div id="courseRanking" class="ranking"></div>
+          </article>
+
+          <article class="card">
+            <h3 style="margin:0 0 14px;"><i class="fa-solid fa-swatchbook"></i> Cores mais cadastradas</h3>
+            <div id="colorRanking" class="ranking"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="page-vehicles" class="page">
+        <div class="section-title">
+          <div>
+            <h2>Cadastro de veículos</h2>
+            <p>Registre placa, proprietário, telefone, modelo, cor, curso e fase do estudante.</p>
+          </div>
+        </div>
+
+        <article class="card">
+          <form id="vehicleForm">
+            <input type="hidden" id="vehicleEditId">
+
+            <div class="form-row">
+              <div class="field">
+                <label for="plate">Placa *</label>
+                <input id="plate" type="text" placeholder="Ex.: ABC1D23" maxlength="8" required>
+                <span class="mini muted">Aceita formato antigo ou Mercosul. A placa será salva em maiúsculas.</span>
+              </div>
+
+              <div class="field">
+                <label for="ownerName">Nome do proprietário *</label>
+                <input id="ownerName" type="text" placeholder="Nome completo" required>
+              </div>
+
+              <div class="field">
+                <label for="ownerPhone">Telefone do proprietário *</label>
+                <input id="ownerPhone" type="text" placeholder="(48) 99999-9999" required>
+              </div>
+
+              <div class="field">
+                <label for="carColor">Cor do carro *</label>
+                <input id="carColor" type="text" placeholder="Ex.: Branco" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="field">
+                <label for="carModel">Modelo do carro *</label>
+                <input id="carModel" type="text" placeholder="Ex.: Onix, Gol, HB20" required>
+              </div>
+
+              <div class="field">
+                <label for="course">Curso na FMP *</label>
+                <select id="course" required></select>
+              </div>
+
+              <div class="field">
+                <label for="phase">Fase *</label>
+                <select id="phase" required></select>
+              </div>
+
+              <div class="field">
+                <label for="createdAtDate">Data do cadastro</label>
+                <input id="createdAtDate" type="date">
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="notes">Observações</label>
+              <textarea id="notes" placeholder="Ex.: autorização temporária, troca de veículo, observação da coordenação..."></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn btn-light" type="button" id="clearVehicleBtn"><i class="fa-solid fa-eraser"></i> Limpar</button>
+              <button class="btn btn-primary" type="submit"><i class="fa-solid fa-floppy-disk"></i> Salvar cadastro</button>
+            </div>
+          </form>
+        </article>
+
+        <div class="section-title">
+          <div>
+            <h2>Veículos cadastrados</h2>
+            <p>Use os filtros para localizar rapidamente uma placa, proprietário, curso ou fase.</p>
+          </div>
+        </div>
+
+        <div class="dashboard-filter">
+          <div class="field">
+            <label for="vehicleSearch">Pesquisar</label>
+            <input id="vehicleSearch" type="search" placeholder="Placa, proprietário, telefone, modelo ou cor">
+          </div>
+
+          <div class="field">
+            <label for="vehicleCourseFilter">Curso</label>
+            <select id="vehicleCourseFilter"></select>
+          </div>
+
+          <div class="field">
+            <label for="vehiclePhaseFilter">Fase</label>
+            <select id="vehiclePhaseFilter"></select>
+          </div>
+
+          <button class="btn btn-light" type="button" id="downloadCsvBtn"><i class="fa-solid fa-file-csv"></i> Baixar CSV</button>
+        </div>
+
+        <article class="card">
+          <div id="vehiclesTableWrap"></div>
+        </article>
+      </section>
+
+      <section id="page-settings" class="page">
+        <div class="section-title">
+          <div>
+            <h2>Configurações</h2>
+            <p>Configure o nome do sistema, conexão com GitHub e backup dos dados.</p>
+          </div>
+        </div>
+
+        <article class="card">
+          <form id="settingsForm">
+            <div class="form-row two">
+              <div class="field">
+                <label for="appName">Nome do sistema</label>
+                <input id="appName" type="text" placeholder="Estacionamento FMP">
+              </div>
+
+              <div class="file-row">
+                <div class="preview-box" id="logoPreview">EF</div>
+                <div class="field" style="flex:1; min-width:260px;">
+                  <label for="appLogo">Logo do sistema</label>
+                  <input id="appLogo" type="file" accept="image/*">
+                  <span class="mini muted">A imagem será salva em Base64 dentro do JSON.</span>
+                </div>
+                <button class="btn btn-light" type="button" id="removeLogoBtn"><i class="fa-solid fa-ban"></i> Remover logo</button>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn btn-primary" type="submit"><i class="fa-solid fa-floppy-disk"></i> Salvar configurações</button>
+            </div>
+          </form>
+        </article>
+
+        <article class="card" style="margin-top:18px;">
+          <h3 style="margin:0 0 14px;"><i class="fa-brands fa-github"></i> Conexão GitHub</h3>
+          <form id="githubConfigForm">
+            <div class="form-row two">
+              <div class="field">
+                <label for="githubOwner">Usuário/Organização do GitHub</label>
+                <input id="githubOwner" type="text" placeholder="Ex.: leandropickler">
+              </div>
+
+              <div class="field">
+                <label for="githubRepo">Repositório</label>
+                <input id="githubRepo" type="text" value="estaciomento">
+              </div>
+            </div>
+
+            <div class="form-row two">
+              <div class="field">
+                <label for="githubBranch">Branch</label>
+                <input id="githubBranch" type="text" value="main">
+              </div>
+
+              <div class="field">
+                <label for="githubPath">Arquivo de dados</label>
+                <input id="githubPath" type="text" value="dados/estaciomento.json">
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="githubToken">Token GitHub</label>
+              <input id="githubToken" type="password" placeholder="Cole aqui o token com permissão de leitura e escrita no repositório">
+              <span class="mini muted">Permissão recomendada no fine-grained token: Contents = Read and Write.</span>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn btn-primary" type="submit"><i class="fa-solid fa-floppy-disk"></i> Salvar conexão</button>
+              <button class="btn btn-light" type="button" id="loadGithubBtn"><i class="fa-solid fa-cloud-arrow-down"></i> Carregar do GitHub</button>
+              <button class="btn btn-success" type="button" id="forceSaveGithubBtn"><i class="fa-solid fa-cloud-arrow-up"></i> Enviar para o GitHub</button>
+              <button class="btn btn-danger" type="button" id="removeGithubTokenBtn"><i class="fa-solid fa-key"></i> Remover token</button>
+            </div>
+          </form>
+        </article>
+
+        <div class="grid grid-2" style="margin-top:18px;">
+          <article class="card">
+            <h3 style="margin:0 0 14px;"><i class="fa-solid fa-shield-halved"></i> Trocar senha do usuário atual</h3>
+            <form id="passwordForm">
+              <div class="form-row two">
+                <div class="field">
+                  <label for="newPassword">Nova senha</label>
+                  <input id="newPassword" type="password" minlength="4" placeholder="Digite a nova senha">
+                </div>
+                <div class="field">
+                  <label for="confirmPassword">Confirmar senha</label>
+                  <input id="confirmPassword" type="password" minlength="4" placeholder="Repita a nova senha">
+                </div>
+              </div>
+              <div class="form-actions">
+                <button class="btn btn-primary" type="submit"><i class="fa-solid fa-lock"></i> Atualizar senha</button>
+              </div>
+            </form>
+          </article>
+
+          <article class="card">
+            <h3 style="margin:0 0 14px;"><i class="fa-solid fa-database"></i> Backup</h3>
+            <div class="info-note">
+              O sistema salva uma cópia local no navegador e, quando o token estiver configurado, envia o JSON para o GitHub.
+            </div>
+            <div class="form-actions" style="justify-content:flex-start; margin-top:14px;">
+              <button class="btn btn-light" type="button" id="exportJsonBtn"><i class="fa-solid fa-download"></i> Baixar JSON</button>
+              <label class="btn btn-light" for="importJsonInput"><i class="fa-solid fa-upload"></i> Importar JSON</label>
+              <input id="importJsonInput" class="hidden" type="file" accept="application/json,.json">
+              <button class="btn btn-danger" type="button" id="resetBtn"><i class="fa-solid fa-trash"></i> Limpar dados locais</button>
+            </div>
+          </article>
+        </div>
+
+        <div class="security-note" style="margin-top:18px;">
+          <strong>Atenção:</strong> não coloque o token dentro do arquivo HTML e evite usar repositório público com dados reais de alunos/proprietários. O token é guardado apenas no navegador em que foi configurado.
+        </div>
+      </section>
+    </main>
+
+    <div class="footer">Estacionamento FMP • Sistema estático com JSON no GitHub</div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    (() => {
+      const APP_KEY = "estaciomento_fmp_state_v1";
+      const GITHUB_KEY = "estaciomento_fmp_github_v1";
+      const GITHUB_TOKEN_KEY = "estaciomento_fmp_github_token_v1";
+      const SESSION_KEY = "estaciomento_fmp_session_v1";
+
+      const defaultState = {
+        settings: {
+          appName: "Estacionamento FMP",
+          logo: "",
+          defaultCourse: "Análise e Desenvolvimento de Sistemas",
+          defaultPhase: "1ª Fase"
+        },
+        users: [
+          {
+            id: "user_admin",
+            login: "admin",
+            salt: "b8f62a5c91d44e0da9c7a1086cf0fmp",
+            passwordHash: "928657a284622cf287abbb42e93339a688d2a21d8d142f783f26e899381ddafa",
+            createdAt: "2026-05-27T12:00:00.000Z",
+            role: "write"
+          }
+        ],
+        vehicles: [
+          {
+            id: "vehicle_abc1d23",
+            plate: "ABC1D23",
+            ownerName: "João da Silva",
+            ownerPhone: "(48) 99999-0001",
+            carColor: "Prata",
+            carModel: "Volkswagen Gol",
+            course: "Análise e Desenvolvimento de Sistemas",
+            phase: "1ª Fase",
+            notes: "Cadastro de teste.",
+            createdAt: "2026-05-27T09:00:00.000Z",
+            updatedAt: "2026-05-27T09:00:00.000Z"
+          },
+          {
+            id: "vehicle_bra2e45",
+            plate: "BRA2E45",
+            ownerName: "Maria Oliveira",
+            ownerPhone: "(48) 98888-0002",
+            carColor: "Branco",
+            carModel: "Hyundai HB20",
+            course: "Pedagogia",
+            phase: "3ª Fase",
+            notes: "Cadastro de teste.",
+            createdAt: "2026-05-27T10:00:00.000Z",
+            updatedAt: "2026-05-27T10:00:00.000Z"
+          },
+          {
+            id: "vehicle_fmp2026",
+            plate: "FMP2026",
+            ownerName: "Carlos Santos",
+            ownerPhone: "(48) 97777-0003",
+            carColor: "Preto",
+            carModel: "Chevrolet Onix",
+            course: "Administração",
+            phase: "5ª Fase",
+            notes: "Cadastro de teste.",
+            createdAt: "2026-05-27T11:00:00.000Z",
+            updatedAt: "2026-05-27T11:00:00.000Z"
+          }
+        ]
+      };
+
+      const DEFAULT_GITHUB = {
+        owner: "leandropickler",
+        repo: "estaciomento",
+        branch: "main",
+        path: "dados/estaciomento.json",
+        token: ""
+      };
+
+      const COURSES = [
+        "Análise e Desenvolvimento de Sistemas",
+        "Administração",
+        "Pedagogia",
+        "Gestão Pública",
+        "Processos Gerenciais",
+        "Outro"
+      ];
+
+      const PHASES = ["1ª Fase", "2ª Fase", "3ª Fase", "4ª Fase", "5ª Fase", "6ª Fase", "7ª Fase", "8ª Fase", "Egresso", "Outro"];
+
+      const $ = selector => document.querySelector(selector);
+      const $$ = selector => Array.from(document.querySelectorAll(selector));
+      const clone = value => JSON.parse(JSON.stringify(value));
+
+      let state = clone(defaultState);
+      let githubConfig = loadGithubConfig();
+      let fileSha = null;
+      let currentUser = null;
+      let tempLogo = "";
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function toast(message) {
+        const el = $("#toast");
+        el.textContent = message;
+        el.classList.add("show");
+        clearTimeout(toast.timer);
+        toast.timer = setTimeout(() => el.classList.remove("show"), 3600);
+      }
+
+      async function sha256(text) {
+        const data = new TextEncoder().encode(text);
+        const hash = await crypto.subtle.digest("SHA-256", data);
+        return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, "0")).join("");
+      }
+
+      function uuid(prefix = "id") {
+        if (crypto.randomUUID) return `${prefix}_${crypto.randomUUID()}`;
+        return `${prefix}_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+      }
+
+      function normalizePlate(value) {
+        return String(value || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 7);
+      }
+
+      function isValidPlate(value) {
+        const plate = normalizePlate(value);
+        return /^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/.test(plate);
+      }
+
+      function formatPhone(value) {
+        const digits = String(value || "").replace(/\D/g, "").slice(0, 11);
+        if (digits.length <= 10) {
+          return digits.replace(/(\d{2})(\d{4})(\d{0,4})/, (_, ddd, part1, part2) => part2 ? `(${ddd}) ${part1}-${part2}` : `(${ddd}) ${part1}`);
+        }
+        return digits.replace(/(\d{2})(\d{5})(\d{0,4})/, (_, ddd, part1, part2) => part2 ? `(${ddd}) ${part1}-${part2}` : `(${ddd}) ${part1}`);
+      }
+
+      function dateOnly(iso) {
+        if (!iso) return "";
+        return String(iso).slice(0, 10);
+      }
+
+      function formatDate(iso) {
+        const date = iso ? new Date(iso) : null;
+        if (!date || Number.isNaN(date.getTime())) return "-";
+        return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" }).format(date);
+      }
+
+      function loadLocalCache() {
+        try {
+          const raw = localStorage.getItem(APP_KEY);
+          if (!raw) return clone(defaultState);
+          return normalizeState(JSON.parse(raw));
+        } catch {
+          return clone(defaultState);
+        }
+      }
+
+      function saveLocalCache() {
+        localStorage.setItem(APP_KEY, JSON.stringify(state));
+      }
+
+      function normalizeState(data) {
+        const normalized = clone(defaultState);
+        normalized.settings = { ...normalized.settings, ...(data?.settings || {}) };
+        normalized.users = Array.isArray(data?.users) && data.users.length ? data.users : normalized.users;
+        normalized.vehicles = Array.isArray(data?.vehicles) ? data.vehicles.map(vehicle => ({
+          id: vehicle.id || uuid("vehicle"),
+          plate: normalizePlate(vehicle.plate),
+          ownerName: vehicle.ownerName || "",
+          ownerPhone: vehicle.ownerPhone || "",
+          carColor: vehicle.carColor || "",
+          carModel: vehicle.carModel || "",
+          course: vehicle.course || normalized.settings.defaultCourse,
+          phase: vehicle.phase || normalized.settings.defaultPhase,
+          notes: vehicle.notes || "",
+          createdAt: vehicle.createdAt || new Date().toISOString(),
+          updatedAt: vehicle.updatedAt || vehicle.createdAt || new Date().toISOString()
+        })) : normalized.vehicles;
+        return normalized;
+      }
+
+      function loadGithubConfig() {
+        let saved = {};
+        try { saved = JSON.parse(localStorage.getItem(GITHUB_KEY) || "{}"); } catch { saved = {}; }
+        const token = localStorage.getItem(GITHUB_TOKEN_KEY) || "";
+        return { ...DEFAULT_GITHUB, ...saved, token };
+      }
+
+      function saveGithubConfig(config) {
+        githubConfig = { ...githubConfig, ...config };
+        const { token, ...safeConfig } = githubConfig;
+        localStorage.setItem(GITHUB_KEY, JSON.stringify(safeConfig));
+        if (token) localStorage.setItem(GITHUB_TOKEN_KEY, token);
+        fillGithubConfigForms();
+        updateSyncStatus("warn", "Configuração salva. Carregue ou envie os dados.");
+      }
+
+      function removeGithubToken() {
+        localStorage.removeItem(GITHUB_TOKEN_KEY);
+        githubConfig.token = "";
+        fillGithubConfigForms();
+        updateSyncStatus("warn", "Token removido deste navegador.");
+      }
+
+      function hasGithubBaseConfig() {
+        return Boolean(githubConfig.owner && githubConfig.repo && githubConfig.branch && githubConfig.path);
+      }
+
+      function requireGithubToken() {
+        if (!hasGithubBaseConfig()) {
+          toast("Configure usuário, repositório, branch e caminho do JSON.");
+          return false;
+        }
+        if (!githubConfig.token) {
+          toast("Informe e salve o token do GitHub neste navegador.");
+          return false;
+        }
+        return true;
+      }
+
+      function githubUrl() {
+        const path = githubConfig.path.split("/").map(encodeURIComponent).join("/");
+        return `https://api.github.com/repos/${encodeURIComponent(githubConfig.owner)}/${encodeURIComponent(githubConfig.repo)}/contents/${path}`;
+      }
+
+      function utf8ToBase64(text) {
+        const bytes = new TextEncoder().encode(text);
+        let binary = "";
+        bytes.forEach(byte => binary += String.fromCharCode(byte));
+        return btoa(binary);
+      }
+
+      function base64ToUtf8(base64) {
+        const binary = atob(String(base64 || "").replace(/\s/g, ""));
+        const bytes = Uint8Array.from(binary, char => char.charCodeAt(0));
+        return new TextDecoder().decode(bytes);
+      }
+
+      async function loadStateFromGithub(showMessage = true) {
+        if (!requireGithubToken()) return false;
+        updateSyncStatus("warn", "Carregando dados do GitHub...");
+        try {
+          const response = await fetch(`${githubUrl()}?ref=${encodeURIComponent(githubConfig.branch)}`, {
+            headers: {
+              Accept: "application/vnd.github+json",
+              Authorization: `Bearer ${githubConfig.token}`,
+              "X-GitHub-Api-Version": "2022-11-28"
+            }
+          });
+
+          if (response.status === 404) {
+            updateSyncStatus("error", "Arquivo JSON não encontrado no GitHub.");
+            if (showMessage) toast("Arquivo JSON não encontrado. Envie o dados/estaciomento.json para o repositório ou clique em Enviar para o GitHub.");
+            return false;
+          }
+
+          if (!response.ok) throw new Error(`GitHub retornou ${response.status}`);
+
+          const payload = await response.json();
+          fileSha = payload.sha;
+          const content = base64ToUtf8(payload.content);
+          state = normalizeState(JSON.parse(content));
+          saveLocalCache();
+          renderAll();
+          updateSyncStatus("ok", "Dados carregados do GitHub.");
+          if (showMessage) toast("Dados carregados do GitHub.");
+          return true;
+        } catch (error) {
+          console.error(error);
+          updateSyncStatus("error", "Erro ao carregar dados do GitHub.");
+          if (showMessage) toast("Erro ao carregar do GitHub. Verifique token, repositório e caminho do arquivo.");
+          return false;
+        }
+      }
+
+      async function saveStateToGithub(message = "Atualização dos dados do estacionamento") {
+        if (!requireGithubToken()) return false;
+        updateSyncStatus("warn", "Enviando dados para o GitHub...");
+        try {
+          if (!fileSha) {
+            const lookup = await fetch(`${githubUrl()}?ref=${encodeURIComponent(githubConfig.branch)}`, {
+              headers: {
+                Accept: "application/vnd.github+json",
+                Authorization: `Bearer ${githubConfig.token}`,
+                "X-GitHub-Api-Version": "2022-11-28"
+              }
+            });
+            if (lookup.ok) {
+              const existing = await lookup.json();
+              fileSha = existing.sha;
+            }
+          }
+
+          const body = {
+            message,
+            content: utf8ToBase64(JSON.stringify(state, null, 2)),
+            branch: githubConfig.branch
+          };
+          if (fileSha) body.sha = fileSha;
+
+          const response = await fetch(githubUrl(), {
+            method: "PUT",
+            headers: {
+              Accept: "application/vnd.github+json",
+              Authorization: `Bearer ${githubConfig.token}`,
+              "X-GitHub-Api-Version": "2022-11-28",
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+          });
+
+          if (!response.ok) {
+            const detail = await response.text();
+            throw new Error(`GitHub retornou ${response.status}: ${detail}`);
+          }
+
+          const payload = await response.json();
+          fileSha = payload.content?.sha || fileSha;
+          updateSyncStatus("ok", "Dados salvos no GitHub.");
+          return true;
+        } catch (error) {
+          console.error(error);
+          updateSyncStatus("error", "Erro ao salvar no GitHub.");
+          toast("Erro ao salvar no GitHub. Verifique se o token tem permissão Contents: Read and Write.");
+          return false;
+        }
+      }
+
+      async function save(message = "Dados salvos.") {
+        state = normalizeState(state);
+        saveLocalCache();
+        renderAll();
+        if (githubConfig.token && hasGithubBaseConfig()) {
+          await saveStateToGithub(message);
+        } else {
+          updateSyncStatus("warn", "Salvo apenas neste navegador.");
+        }
+        toast(message);
+      }
+
+      function updateSyncStatus(kind = null, text = null) {
+        let statusKind = kind;
+        let statusText = text;
+        if (!statusKind) {
+          statusKind = hasGithubBaseConfig() ? (githubConfig.token ? "ok" : "warn") : "warn";
+          statusText = hasGithubBaseConfig() ? (githubConfig.token ? "GitHub configurado" : "GitHub sem token") : "GitHub não configurado";
+        }
+        ["#syncStatusBadge", "#loginSyncStatus"].forEach(selector => {
+          const el = $(selector);
+          if (!el) return;
+          el.className = `sync-badge ${statusKind}`;
+          el.innerHTML = `<i class="fa-brands fa-github"></i> ${escapeHtml(statusText)}`;
+        });
+      }
+
+      function fillGithubConfigForms() {
+        [["", "github"], ["login", "loginGithub"]].forEach(([prefix, base]) => {
+          const owner = $(`#${base}Owner`);
+          const repo = $(`#${base}Repo`);
+          const branch = $(`#${base}Branch`);
+          const path = $(`#${base}Path`);
+          const token = $(`#${base}Token`);
+          if (owner) owner.value = githubConfig.owner || "";
+          if (repo) repo.value = githubConfig.repo || "estaciomento";
+          if (branch) branch.value = githubConfig.branch || "main";
+          if (path) path.value = githubConfig.path || "dados/estaciomento.json";
+          if (token) token.value = "";
+        });
+      }
+
+      function saveGithubForm(prefix = "") {
+        const id = name => prefix ? `#${prefix}Github${name}` : `#github${name}`;
+        const owner = $(id("Owner")).value.trim();
+        const repo = $(id("Repo")).value.trim() || "estaciomento";
+        const branch = $(id("Branch")).value.trim() || "main";
+        const path = $(id("Path")).value.trim() || "dados/estaciomento.json";
+        const token = $(id("Token")).value.trim();
+
+        if (!owner || !repo || !branch || !path) {
+          toast("Preencha usuário/organização, repositório, branch e caminho do arquivo.");
+          return false;
+        }
+
+        saveGithubConfig({ owner, repo, branch, path, token: token || githubConfig.token });
+        $(id("Token")).value = "";
+        toast("Configuração GitHub salva neste navegador.");
+        return true;
+      }
+
+      async function handleLogin(event) {
+        event.preventDefault();
+        const login = $("#loginUser").value.trim();
+        const password = $("#loginPassword").value;
+        const user = state.users.find(item => item.login.toLowerCase() === login.toLowerCase());
+        if (!user) {
+          toast("Usuário ou senha inválidos.");
+          return;
+        }
+        const passwordHash = await sha256(`${user.salt}${password}`);
+        if (passwordHash !== user.passwordHash) {
+          toast("Usuário ou senha inválidos.");
+          return;
+        }
+        currentUser = { id: user.id, login: user.login, role: user.role || "write" };
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify(currentUser));
+        setLoggedInView();
+        toast("Login realizado com sucesso.");
+      }
+
+      function restoreSession() {
+        try {
+          const session = JSON.parse(sessionStorage.getItem(SESSION_KEY) || "null");
+          if (session?.id && state.users.some(user => user.id === session.id)) {
+            currentUser = session;
+            setLoggedInView();
+            return;
+          }
+        } catch {}
+        setLoggedOutView();
+      }
+
+      function logout() {
+        currentUser = null;
+        sessionStorage.removeItem(SESSION_KEY);
+        $("#loginPassword").value = "";
+        setLoggedOutView();
+      }
+
+      function setLoggedInView() {
+        $("#loginScreen").classList.add("hidden");
+        $("#appShell").classList.remove("hidden");
+        $("#currentUserInfo").textContent = `Usuário: ${currentUser.login} • Cadastro de placas e proprietários vinculados aos cursos da FMP`;
+        showTab("dashboard");
+        renderAll();
+      }
+
+      function setLoggedOutView() {
+        $("#loginScreen").classList.remove("hidden");
+        $("#appShell").classList.add("hidden");
+        renderBrand();
+        updateSyncStatus();
+      }
+
+      function showTab(tab) {
+        $$(".tab-btn").forEach(button => button.classList.toggle("active", button.dataset.tab === tab));
+        $$(".page").forEach(page => page.classList.toggle("active", page.id === `page-${tab}`));
+        if (tab === "vehicles") renderVehicles();
+        if (tab === "dashboard") renderDashboard();
+        if (tab === "settings") renderSettings();
+      }
+
+      function getVehicle(id) {
+        return state.vehicles.find(vehicle => vehicle.id === id);
+      }
+
+      function filteredVehicles(source = "dashboard") {
+        const search = source === "vehicles" ? ($("#vehicleSearch")?.value || "").toLowerCase().trim() : "";
+        const course = source === "vehicles" ? ($("#vehicleCourseFilter")?.value || "all") : ($("#dashboardCourseFilter")?.value || "all");
+        const phase = source === "vehicles" ? ($("#vehiclePhaseFilter")?.value || "all") : ($("#dashboardPhaseFilter")?.value || "all");
+
+        return state.vehicles.filter(vehicle => {
+          const text = [vehicle.plate, vehicle.ownerName, vehicle.ownerPhone, vehicle.carColor, vehicle.carModel, vehicle.course, vehicle.phase, vehicle.notes].join(" ").toLowerCase();
+          const matchesSearch = !search || text.includes(search);
+          const matchesCourse = course === "all" || vehicle.course === course;
+          const matchesPhase = phase === "all" || vehicle.phase === phase;
+          return matchesSearch && matchesCourse && matchesPhase;
+        }).sort((a, b) => String(a.plate).localeCompare(String(b.plate), "pt-BR"));
+      }
+
+      function uniqueValues(field) {
+        return [...new Set(state.vehicles.map(vehicle => vehicle[field]).filter(Boolean))].sort((a, b) => String(a).localeCompare(String(b), "pt-BR"));
+      }
+
+      function fillSelect(select, values, options = {}) {
+        if (!select) return;
+        const { allLabel = "Todos", selected = select.value, includeAll = true } = options;
+        select.innerHTML = "";
+        if (includeAll) select.append(new Option(allLabel, "all"));
+        values.forEach(value => select.append(new Option(value, value)));
+        if ([...select.options].some(option => option.value === selected)) select.value = selected;
+      }
+
+      function renderFilterSelects() {
+        const courses = [...new Set([...COURSES, ...uniqueValues("course")])].filter(Boolean);
+        const phases = [...new Set([...PHASES, ...uniqueValues("phase")])].filter(Boolean);
+
+        fillSelect($("#course"), courses, { includeAll: false, selected: $("#course")?.value || state.settings.defaultCourse });
+        fillSelect($("#phase"), phases, { includeAll: false, selected: $("#phase")?.value || state.settings.defaultPhase });
+        fillSelect($("#dashboardCourseFilter"), courses, { allLabel: "Todos os cursos" });
+        fillSelect($("#dashboardPhaseFilter"), phases, { allLabel: "Todas as fases" });
+        fillSelect($("#vehicleCourseFilter"), courses, { allLabel: "Todos os cursos" });
+        fillSelect($("#vehiclePhaseFilter"), phases, { allLabel: "Todas as fases" });
+      }
+
+      function renderBrand() {
+        const name = state.settings.appName || "Estacionamento FMP";
+        $("#loginTitle").textContent = name;
+        $("#brandTitle").textContent = name;
+        const logoHtml = state.settings.logo ? `<img src="${state.settings.logo}" alt="Logo">` : "EF";
+        $("#loginLogo").innerHTML = logoHtml;
+        $("#brandLogo").innerHTML = logoHtml;
+      }
+
+      function renderSettings() {
+        $("#appName").value = state.settings.appName || "Estacionamento FMP";
+        tempLogo = state.settings.logo || "";
+        renderLogoPreview();
+        fillGithubConfigForms();
+      }
+
+      function renderLogoPreview() {
+        const logo = tempLogo || state.settings.logo;
+        $("#logoPreview").innerHTML = logo ? `<img src="${logo}" alt="Logo">` : "EF";
+        renderBrand();
+      }
+
+      function countBy(list, field) {
+        return list.reduce((acc, item) => {
+          const key = item[field] || "Não informado";
+          acc[key] = (acc[key] || 0) + 1;
+          return acc;
+        }, {});
+      }
+
+      function renderRanking(container, data) {
+        const entries = Object.entries(data).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "pt-BR"));
+        if (!entries.length) {
+          container.innerHTML = `<div class="empty"><i class="fa-solid fa-circle-info"></i>Nenhum cadastro encontrado.</div>`;
+          return;
+        }
+        const max = Math.max(...entries.map(([, value]) => value), 1);
+        container.innerHTML = entries.map(([label, value]) => `
+          <div class="rank-row">
+            <div>
+              <strong>${escapeHtml(label)}</strong>
+              <div class="rank-bar"><div class="rank-fill" style="width:${Math.round((value / max) * 100)}%"></div></div>
+            </div>
+            <span class="pill blue">${value}</span>
+          </div>
+        `).join("");
+      }
+
+      function renderDashboard() {
+        renderFilterSelects();
+        const vehicles = filteredVehicles("dashboard");
+        const today = new Date().toISOString().slice(0, 10);
+        $("#totalVehicles").textContent = vehicles.length;
+        $("#totalCourses").textContent = new Set(vehicles.map(vehicle => vehicle.course).filter(Boolean)).size;
+        $("#totalPhases").textContent = new Set(vehicles.map(vehicle => vehicle.phase).filter(Boolean)).size;
+        $("#totalToday").textContent = vehicles.filter(vehicle => dateOnly(vehicle.createdAt) === today).length;
+
+        const courseFilter = $("#dashboardCourseFilter")?.value || "all";
+        const phaseFilter = $("#dashboardPhaseFilter")?.value || "all";
+        const activeFilters = [];
+        if (courseFilter !== "all") activeFilters.push(courseFilter);
+        if (phaseFilter !== "all") activeFilters.push(phaseFilter);
+        $("#filterBadge").innerHTML = `<i class="fa-solid fa-filter"></i> ${escapeHtml(activeFilters.join(" • ") || "Todos os cadastros")}`;
+
+        renderRanking($("#courseRanking"), countBy(vehicles, "course"));
+        renderRanking($("#colorRanking"), countBy(vehicles, "carColor"));
+      }
+
+      function renderVehicles() {
+        renderFilterSelects();
+        const vehicles = filteredVehicles("vehicles");
+        const wrap = $("#vehiclesTableWrap");
+        if (!vehicles.length) {
+          wrap.innerHTML = `<div class="empty"><i class="fa-solid fa-car-side"></i>Nenhum veículo encontrado com os filtros atuais.</div>`;
+          return;
+        }
+        wrap.innerHTML = `
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Placa</th>
+                  <th>Proprietário</th>
+                  <th>Telefone</th>
+                  <th>Modelo</th>
+                  <th>Cor</th>
+                  <th>Curso</th>
+                  <th>Fase</th>
+                  <th>Cadastro</th>
+                  <th style="text-align:right;">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${vehicles.map(vehicle => `
+                  <tr>
+                    <td><span class="plate-tag">${escapeHtml(vehicle.plate)}</span></td>
+                    <td><strong>${escapeHtml(vehicle.ownerName)}</strong>${vehicle.notes ? `<br><span class="mini muted">${escapeHtml(vehicle.notes)}</span>` : ""}</td>
+                    <td>${escapeHtml(vehicle.ownerPhone || "-")}</td>
+                    <td>${escapeHtml(vehicle.carModel || "-")}</td>
+                    <td><span class="pill">${escapeHtml(vehicle.carColor || "-")}</span></td>
+                    <td><span class="pill blue">${escapeHtml(vehicle.course || "-")}</span></td>
+                    <td><span class="pill green">${escapeHtml(vehicle.phase || "-")}</span></td>
+                    <td>${formatDate(vehicle.createdAt)}</td>
+                    <td><div class="td-actions">
+                      <button class="btn btn-light btn-sm" data-action="editVehicle" data-id="${vehicle.id}"><i class="fa-solid fa-pen"></i> Editar</button>
+                      <button class="btn btn-danger btn-sm" data-action="deleteVehicle" data-id="${vehicle.id}"><i class="fa-solid fa-trash"></i> Excluir</button>
+                    </div></td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
+
+      function clearVehicleForm() {
+        $("#vehicleEditId").value = "";
+        $("#plate").value = "";
+        $("#ownerName").value = "";
+        $("#ownerPhone").value = "";
+        $("#carColor").value = "";
+        $("#carModel").value = "";
+        $("#course").value = state.settings.defaultCourse || COURSES[0];
+        $("#phase").value = state.settings.defaultPhase || PHASES[0];
+        $("#createdAtDate").value = new Date().toISOString().slice(0, 10);
+        $("#notes").value = "";
+        $("#plate").focus();
+      }
+
+      async function saveVehicleForm(event) {
+        event.preventDefault();
+        const editId = $("#vehicleEditId").value;
+        const plate = normalizePlate($("#plate").value);
+        if (!isValidPlate(plate)) {
+          toast("Informe uma placa válida. Exemplo: ABC1D23 ou ABC1234.");
+          return;
+        }
+        const duplicated = state.vehicles.find(vehicle => vehicle.plate === plate && vehicle.id !== editId);
+        if (duplicated) {
+          toast("Já existe um cadastro com esta placa.");
+          return;
+        }
+
+        const dateValue = $("#createdAtDate").value || new Date().toISOString().slice(0, 10);
+        const current = editId ? getVehicle(editId) : null;
+        const vehicle = {
+          id: editId || `vehicle_${plate.toLowerCase()}`,
+          plate,
+          ownerName: $("#ownerName").value.trim(),
+          ownerPhone: formatPhone($("#ownerPhone").value),
+          carColor: $("#carColor").value.trim(),
+          carModel: $("#carModel").value.trim(),
+          course: $("#course").value,
+          phase: $("#phase").value,
+          notes: $("#notes").value.trim(),
+          createdAt: current?.createdAt || `${dateValue}T12:00:00.000Z`,
+          updatedAt: new Date().toISOString()
+        };
+
+        if (!vehicle.ownerName || !vehicle.ownerPhone || !vehicle.carColor || !vehicle.carModel || !vehicle.course || !vehicle.phase) {
+          toast("Preencha todos os campos obrigatórios.");
+          return;
+        }
+
+        if (editId) {
+          state.vehicles = state.vehicles.map(item => item.id === editId ? vehicle : item);
+        } else {
+          state.vehicles.push(vehicle);
+        }
+
+        clearVehicleForm();
+        await save(editId ? "Cadastro de veículo atualizado." : "Cadastro de veículo incluído.");
+      }
+
+      function editVehicle(id) {
+        const vehicle = getVehicle(id);
+        if (!vehicle) return;
+        showTab("vehicles");
+        $("#vehicleEditId").value = vehicle.id;
+        $("#plate").value = vehicle.plate;
+        $("#ownerName").value = vehicle.ownerName;
+        $("#ownerPhone").value = vehicle.ownerPhone;
+        $("#carColor").value = vehicle.carColor;
+        $("#carModel").value = vehicle.carModel;
+        $("#course").value = vehicle.course;
+        $("#phase").value = vehicle.phase;
+        $("#createdAtDate").value = dateOnly(vehicle.createdAt) || new Date().toISOString().slice(0, 10);
+        $("#notes").value = vehicle.notes || "";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      async function deleteVehicle(id) {
+        const vehicle = getVehicle(id);
+        if (!vehicle) return;
+        if (!confirm(`Excluir o cadastro da placa ${vehicle.plate}?`)) return;
+        state.vehicles = state.vehicles.filter(item => item.id !== id);
+        await save("Cadastro de veículo excluído.");
+      }
+
+      async function saveSettingsForm(event) {
+        event.preventDefault();
+        state.settings.appName = $("#appName").value.trim() || "Estacionamento FMP";
+        state.settings.logo = tempLogo || "";
+        await save("Configurações salvas.");
+      }
+
+      async function savePasswordForm(event) {
+        event.preventDefault();
+        if (!currentUser) return;
+        const password = $("#newPassword").value;
+        const confirmPassword = $("#confirmPassword").value;
+        if (!password || password.length < 4) {
+          toast("A nova senha precisa ter pelo menos 4 caracteres.");
+          return;
+        }
+        if (password !== confirmPassword) {
+          toast("As senhas não conferem.");
+          return;
+        }
+        const user = state.users.find(item => item.id === currentUser.id);
+        if (!user) return;
+        user.salt = uuid("salt").replace(/[^a-zA-Z0-9]/g, "").slice(0, 32);
+        user.passwordHash = await sha256(`${user.salt}${password}`);
+        $("#newPassword").value = "";
+        $("#confirmPassword").value = "";
+        await save("Senha atualizada.");
+      }
+
+      function readImage(file, callback) {
+        if (!file) return;
+        if (!file.type.startsWith("image/")) {
+          toast("Selecione um arquivo de imagem válido.");
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => callback(reader.result);
+        reader.readAsDataURL(file);
+      }
+
+      function exportJson() {
+        downloadText("estaciomento.json", JSON.stringify(state, null, 2), "application/json");
+      }
+
+      function exportCsv() {
+        const rows = filteredVehicles("vehicles");
+        const headers = ["Placa", "Proprietário", "Telefone", "Modelo", "Cor", "Curso", "Fase", "Cadastro", "Observações"];
+        const csvRows = [headers, ...rows.map(vehicle => [
+          vehicle.plate,
+          vehicle.ownerName,
+          vehicle.ownerPhone,
+          vehicle.carModel,
+          vehicle.carColor,
+          vehicle.course,
+          vehicle.phase,
+          formatDate(vehicle.createdAt),
+          vehicle.notes || ""
+        ])];
+        const csv = csvRows.map(row => row.map(value => `"${String(value ?? "").replaceAll('"', '""')}"`).join(";")).join("\n");
+        downloadText("veiculos-estacionamento-fmp.csv", "\ufeff" + csv, "text/csv;charset=utf-8");
+      }
+
+      function downloadText(fileName, content, type) {
+        const blob = new Blob([content], { type });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      function importJson(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async () => {
+          try {
+            state = normalizeState(JSON.parse(reader.result));
+            await save("JSON importado com sucesso.");
+          } catch (error) {
+            console.error(error);
+            toast("Arquivo JSON inválido.");
+          } finally {
+            $("#importJsonInput").value = "";
+          }
+        };
+        reader.readAsText(file, "utf-8");
+      }
+
+      async function resetData() {
+        if (!confirm("Deseja limpar os dados locais deste navegador? Isso não apaga o arquivo no GitHub.")) return;
+        localStorage.removeItem(APP_KEY);
+        fileSha = null;
+        state = clone(defaultState);
+        saveLocalCache();
+        renderAll();
+        toast("Dados locais restaurados para o modelo inicial.");
+      }
+
+      function renderAll() {
+        state = normalizeState(state);
+        renderBrand();
+        renderFilterSelects();
+        renderDashboard();
+        renderVehicles();
+        if ($("#page-settings")?.classList.contains("active")) renderSettings();
+        updateSyncStatus();
+      }
+
+      function bindEvents() {
+        $("#loginForm").addEventListener("submit", handleLogin);
+        $("#logoutBtn").addEventListener("click", logout);
+        $$(".tab-btn").forEach(button => button.addEventListener("click", () => showTab(button.dataset.tab)));
+
+        document.addEventListener("click", async event => {
+          const button = event.target.closest("[data-action]");
+          if (!button) return;
+          const actions = { editVehicle, deleteVehicle };
+          if (actions[button.dataset.action]) await actions[button.dataset.action](button.dataset.id);
+        });
+
+        ["#dashboardCourseFilter", "#dashboardPhaseFilter"].forEach(selector => $(selector).addEventListener("change", renderDashboard));
+        ["#vehicleSearch", "#vehicleCourseFilter", "#vehiclePhaseFilter"].forEach(selector => $(selector).addEventListener("input", renderVehicles));
+        ["#vehicleCourseFilter", "#vehiclePhaseFilter"].forEach(selector => $(selector).addEventListener("change", renderVehicles));
+
+        $("#vehicleForm").addEventListener("submit", saveVehicleForm);
+        $("#clearVehicleBtn").addEventListener("click", clearVehicleForm);
+        $("#plate").addEventListener("input", event => event.target.value = normalizePlate(event.target.value));
+        $("#ownerPhone").addEventListener("blur", event => event.target.value = formatPhone(event.target.value));
+
+        $("#settingsForm").addEventListener("submit", saveSettingsForm);
+        $("#appLogo").addEventListener("change", event => readImage(event.target.files[0], base64 => { tempLogo = base64; renderLogoPreview(); }));
+        $("#removeLogoBtn").addEventListener("click", () => { tempLogo = ""; state.settings.logo = ""; renderLogoPreview(); toast("Logo removida. Clique em Salvar configurações."); });
+        $("#passwordForm").addEventListener("submit", savePasswordForm);
+
+        $("#githubConfigForm").addEventListener("submit", event => { event.preventDefault(); saveGithubForm(""); });
+        $("#githubLoginConfigForm").addEventListener("submit", event => { event.preventDefault(); saveGithubForm("login"); });
+        $("#loadGithubBtn").addEventListener("click", () => loadStateFromGithub(true));
+        $("#loginLoadGithubBtn").addEventListener("click", () => loadStateFromGithub(true));
+        $("#reloadGithubBtn").addEventListener("click", () => loadStateFromGithub(true));
+        $("#forceSaveGithubBtn").addEventListener("click", async () => {
+          await saveStateToGithub("Atualização manual dos dados do estacionamento");
+          toast("Envio manual finalizado.");
+        });
+        $("#removeGithubTokenBtn").addEventListener("click", () => { removeGithubToken(); toast("Token removido deste navegador."); });
+
+        $("#exportJsonBtn").addEventListener("click", exportJson);
+        $("#downloadCsvBtn").addEventListener("click", exportCsv);
+        $("#importJsonInput").addEventListener("change", event => importJson(event.target.files[0]));
+        $("#resetBtn").addEventListener("click", resetData);
+      }
+
+      async function init() {
+        bindEvents();
+        fillGithubConfigForms();
+        state = loadLocalCache();
+        if (hasGithubBaseConfig() && githubConfig.token) {
+          await loadStateFromGithub(false);
+        } else {
+          saveLocalCache();
+        }
+        renderAll();
+        clearVehicleForm();
+        restoreSession();
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>
