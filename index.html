@@ -311,7 +311,7 @@
 
             <div class="field">
               <label for="loginGithubRepo">Repositório</label>
-              <input id="loginGithubRepo" type="text" value="estaciomento">
+              <input id="loginGithubRepo" type="text" value="estacionamento">
             </div>
           </div>
 
@@ -323,8 +323,8 @@
 
             <div class="field">
               <label for="loginGithubPath">Arquivo de dados</label>
-              <input id="loginGithubPath" type="text" value="dados/estaciomento.json">
-              <span class="mini muted">Use exatamente: dados/estaciomento.json. Evite nomes como estaciomento(1).json.</span>
+              <input id="loginGithubPath" type="text" value="dados/estacionamento.json">
+              <span class="mini muted">Use exatamente: dados/estacionamento.json. Evite nomes como estacionamento(1).json.</span>
             </div>
           </div>
 
@@ -567,7 +567,7 @@
 
               <div class="field">
                 <label for="githubRepo">Repositório</label>
-                <input id="githubRepo" type="text" value="estaciomento">
+                <input id="githubRepo" type="text" value="estacionamento">
               </div>
             </div>
 
@@ -579,8 +579,8 @@
 
               <div class="field">
                 <label for="githubPath">Arquivo de dados</label>
-                <input id="githubPath" type="text" value="dados/estaciomento.json">
-                <span class="mini muted">Use exatamente: dados/estaciomento.json. Evite nomes como estaciomento(1).json.</span>
+                <input id="githubPath" type="text" value="dados/estacionamento.json">
+                <span class="mini muted">Use exatamente: dados/estacionamento.json. Evite nomes como estacionamento(1).json.</span>
               </div>
             </div>
 
@@ -646,10 +646,10 @@
 
   <script>
     (() => {
-      const APP_KEY = "estaciomento_fmp_state_v1";
-      const GITHUB_KEY = "estaciomento_fmp_github_v1";
-      const GITHUB_TOKEN_KEY = "estaciomento_fmp_github_token_v1";
-      const SESSION_KEY = "estaciomento_fmp_session_v1";
+      const APP_KEY = "estacionamento_fmp_state_v1";
+      const GITHUB_KEY = "estacionamento_fmp_github_v1";
+      const GITHUB_TOKEN_KEY = "estacionamento_fmp_github_token_v1";
+      const SESSION_KEY = "estacionamento_fmp_session_v1";
 
       const defaultState = {
         settings: {
@@ -713,9 +713,9 @@
 
       const DEFAULT_GITHUB = {
         owner: "leandropickler",
-        repo: "estaciomento",
+        repo: "estacionamento",
         branch: "main",
-        path: "dados/estaciomento.json",
+        path: "dados/estacionamento.json",
         token: ""
       };
 
@@ -870,7 +870,7 @@
       }
 
       function cleanGithubPath(path) {
-        return String(path || "dados/estaciomento.json")
+        return String(path || "dados/estacionamento.json")
           .trim()
           .replace(/\\/g, "/")
           .replace(/^\/+/, "")
@@ -914,7 +914,7 @@
           if (response.status === 404) {
             const target = githubTargetText();
             updateSyncStatus("error", `JSON não encontrado: ${cleanGithubPath(githubConfig.path)}`);
-            if (showMessage) toast(`JSON não encontrado em ${target}. Confira se o arquivo está exatamente na pasta dados com o nome estaciomento.json.`);
+            if (showMessage) toast(`JSON não encontrado em ${target}. Confira repositório, branch, caminho e se o token tem acesso ao repositório.`);
             return false;
           }
 
@@ -932,7 +932,7 @@
         } catch (error) {
           console.error(error);
           updateSyncStatus("error", "Erro ao carregar dados do GitHub.");
-          if (showMessage) toast("Erro ao carregar do GitHub. Verifique token, repositório e caminho do arquivo.");
+          if (showMessage) toast("Erro ao carregar do GitHub. Verifique token, repositório, branch, caminho e permissão Contents: Read and write.");
           return false;
         }
       }
@@ -1025,9 +1025,9 @@
           const path = $(`#${base}Path`);
           const token = $(`#${base}Token`);
           if (owner) owner.value = githubConfig.owner || "";
-          if (repo) repo.value = githubConfig.repo || "estaciomento";
+          if (repo) repo.value = githubConfig.repo || "estacionamento";
           if (branch) branch.value = githubConfig.branch || "main";
-          if (path) path.value = cleanGithubPath(githubConfig.path || "dados/estaciomento.json");
+          if (path) path.value = cleanGithubPath(githubConfig.path || "dados/estacionamento.json");
           if (token) token.value = "";
         });
       }
@@ -1035,9 +1035,9 @@
       function saveGithubForm(prefix = "") {
         const id = name => prefix ? `#${prefix}Github${name}` : `#github${name}`;
         const owner = $(id("Owner")).value.trim();
-        const repo = $(id("Repo")).value.trim() || "estaciomento";
+        const repo = $(id("Repo")).value.trim() || "estacionamento";
         const branch = $(id("Branch")).value.trim() || "main";
-        const path = cleanGithubPath($(id("Path")).value) || "dados/estaciomento.json";
+        const path = cleanGithubPath($(id("Path")).value) || "dados/estacionamento.json";
         const token = $(id("Token")).value.trim();
 
         if (!owner || !repo || !branch || !path) {
@@ -1396,7 +1396,7 @@
       }
 
       function exportJson() {
-        downloadText("estaciomento.json", JSON.stringify(state, null, 2), "application/json");
+        downloadText("estacionamento.json", JSON.stringify(state, null, 2), "application/json");
       }
 
       function exportCsv() {
