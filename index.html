@@ -311,7 +311,7 @@
 
             <div class="field">
               <label for="loginGithubRepo">Repositório</label>
-              <input id="loginGithubRepo" type="text" value="estacionamento">
+              <input id="loginGithubRepo" type="text" value="estaciomento">
             </div>
           </div>
 
@@ -323,8 +323,7 @@
 
             <div class="field">
               <label for="loginGithubPath">Arquivo de dados</label>
-              <input id="loginGithubPath" type="text" value="dados/estacionamento.json">
-              <span class="mini muted">Use exatamente: dados/estacionamento.json. Evite nomes como estacionamento(1).json.</span>
+              <input id="loginGithubPath" type="text" value="dados/estaciomento.json">
             </div>
           </div>
 
@@ -391,28 +390,33 @@
           <div class="sync-badge" id="syncStatusBadge"><i class="fa-brands fa-github"></i> Aguardando sincronização</div>
         </div>
 
-        <div class="grid grid-2">
+        <div class="grid grid-4">
           <article class="card stat-card">
-            <div class="stat-head"><span>Total geral de carros</span><span class="icon"><i class="fa-solid fa-car"></i></span></div>
-            <div><div class="stat-value" id="totalVehiclesGeneral">0</div><p class="stat-note">Todos os carros cadastrados no arquivo JSON.</p></div>
+            <div class="stat-head"><span>Total de veículos</span><span class="icon"><i class="fa-solid fa-car"></i></span></div>
+            <div><div class="stat-value" id="totalVehicles">0</div><p class="stat-note">Placas cadastradas no JSON.</p></div>
           </article>
-
           <article class="card stat-card">
-            <div class="stat-head"><span>Total exibido no filtro</span><span class="icon green"><i class="fa-solid fa-filter"></i></span></div>
-            <div><div class="stat-value" id="totalVehiclesFiltered">0</div><p class="stat-note">Quantidade conforme curso e fase selecionados acima.</p></div>
+            <div class="stat-head"><span>Cursos com veículos</span><span class="icon green"><i class="fa-solid fa-graduation-cap"></i></span></div>
+            <div><div class="stat-value" id="totalCourses">0</div><p class="stat-note">Cursos diferentes encontrados.</p></div>
+          </article>
+          <article class="card stat-card">
+            <div class="stat-head"><span>Fases registradas</span><span class="icon yellow"><i class="fa-solid fa-layer-group"></i></span></div>
+            <div><div class="stat-value" id="totalPhases">0</div><p class="stat-note">Fases diferentes no cadastro.</p></div>
+          </article>
+          <article class="card stat-card">
+            <div class="stat-head"><span>Cadastrados hoje</span><span class="icon red"><i class="fa-solid fa-calendar-day"></i></span></div>
+            <div><div class="stat-value" id="totalToday">0</div><p class="stat-note">Novos registros no dia atual.</p></div>
           </article>
         </div>
 
         <div class="grid grid-2" style="margin-top:18px;">
           <article class="card">
-            <h3 style="margin:0 0 8px;"><i class="fa-solid fa-chart-simple"></i> Total por curso cadastrado</h3>
-            <p class="muted mini" style="margin:0 0 14px;">Soma geral de carros agrupada por curso no JSON.</p>
+            <h3 style="margin:0 0 14px;"><i class="fa-solid fa-chart-simple"></i> Veículos por curso</h3>
             <div id="courseRanking" class="ranking"></div>
           </article>
 
           <article class="card">
-            <h3 style="margin:0 0 8px;"><i class="fa-solid fa-swatchbook"></i> Cores mais cadastradas</h3>
-            <p class="muted mini" style="margin:0 0 14px;">Resumo das cores conforme o filtro selecionado.</p>
+            <h3 style="margin:0 0 14px;"><i class="fa-solid fa-swatchbook"></i> Cores mais cadastradas</h3>
             <div id="colorRanking" class="ranking"></div>
           </article>
         </div>
@@ -562,7 +566,7 @@
 
               <div class="field">
                 <label for="githubRepo">Repositório</label>
-                <input id="githubRepo" type="text" value="estacionamento">
+                <input id="githubRepo" type="text" value="estaciomento">
               </div>
             </div>
 
@@ -574,8 +578,7 @@
 
               <div class="field">
                 <label for="githubPath">Arquivo de dados</label>
-                <input id="githubPath" type="text" value="dados/estacionamento.json">
-                <span class="mini muted">Use exatamente: dados/estacionamento.json. Evite nomes como estacionamento(1).json.</span>
+                <input id="githubPath" type="text" value="dados/estaciomento.json">
               </div>
             </div>
 
@@ -641,10 +644,10 @@
 
   <script>
     (() => {
-      const APP_KEY = "estacionamento_fmp_state_v1";
-      const GITHUB_KEY = "estacionamento_fmp_github_v1";
-      const GITHUB_TOKEN_KEY = "estacionamento_fmp_github_token_v1";
-      const SESSION_KEY = "estacionamento_fmp_session_v1";
+      const APP_KEY = "estaciomento_fmp_state_v1";
+      const GITHUB_KEY = "estaciomento_fmp_github_v1";
+      const GITHUB_TOKEN_KEY = "estaciomento_fmp_github_token_v1";
+      const SESSION_KEY = "estaciomento_fmp_session_v1";
 
       const defaultState = {
         settings: {
@@ -708,9 +711,9 @@
 
       const DEFAULT_GITHUB = {
         owner: "leandropickler",
-        repo: "estacionamento",
+        repo: "estaciomento",
         branch: "main",
-        path: "dados/estacionamento.json",
+        path: "dados/estaciomento.json",
         token: ""
       };
 
@@ -864,20 +867,8 @@
         return true;
       }
 
-      function cleanGithubPath(path) {
-        return String(path || "dados/estacionamento.json")
-          .trim()
-          .replace(/\\/g, "/")
-          .replace(/^\/+/, "")
-          .replace(/\/{2,}/g, "/");
-      }
-
-      function githubTargetText() {
-        return `${githubConfig.owner}/${githubConfig.repo}/${githubConfig.branch}/${cleanGithubPath(githubConfig.path)}`;
-      }
-
       function githubUrl() {
-        const path = cleanGithubPath(githubConfig.path).split("/").map(encodeURIComponent).join("/");
+        const path = githubConfig.path.split("/").map(encodeURIComponent).join("/");
         return `https://api.github.com/repos/${encodeURIComponent(githubConfig.owner)}/${encodeURIComponent(githubConfig.repo)}/contents/${path}`;
       }
 
@@ -907,9 +898,8 @@
           });
 
           if (response.status === 404) {
-            const target = githubTargetText();
-            updateSyncStatus("error", `JSON não encontrado: ${cleanGithubPath(githubConfig.path)}`);
-            if (showMessage) toast(`JSON não encontrado em ${target}. Confira repositório, branch, caminho e se o token tem acesso ao repositório.`);
+            updateSyncStatus("error", "Arquivo JSON não encontrado no GitHub.");
+            if (showMessage) toast("Arquivo JSON não encontrado. Envie o dados/estaciomento.json para o repositório ou clique em Enviar para o GitHub.");
             return false;
           }
 
@@ -927,7 +917,7 @@
         } catch (error) {
           console.error(error);
           updateSyncStatus("error", "Erro ao carregar dados do GitHub.");
-          if (showMessage) toast("Erro ao carregar do GitHub. Verifique token, repositório, branch, caminho e permissão Contents: Read and write.");
+          if (showMessage) toast("Erro ao carregar do GitHub. Verifique token, repositório e caminho do arquivo.");
           return false;
         }
       }
@@ -1020,9 +1010,9 @@
           const path = $(`#${base}Path`);
           const token = $(`#${base}Token`);
           if (owner) owner.value = githubConfig.owner || "";
-          if (repo) repo.value = githubConfig.repo || "estacionamento";
+          if (repo) repo.value = githubConfig.repo || "estaciomento";
           if (branch) branch.value = githubConfig.branch || "main";
-          if (path) path.value = cleanGithubPath(githubConfig.path || "dados/estacionamento.json");
+          if (path) path.value = githubConfig.path || "dados/estaciomento.json";
           if (token) token.value = "";
         });
       }
@@ -1030,9 +1020,9 @@
       function saveGithubForm(prefix = "") {
         const id = name => prefix ? `#${prefix}Github${name}` : `#github${name}`;
         const owner = $(id("Owner")).value.trim();
-        const repo = $(id("Repo")).value.trim() || "estacionamento";
+        const repo = $(id("Repo")).value.trim() || "estaciomento";
         const branch = $(id("Branch")).value.trim() || "main";
-        const path = cleanGithubPath($(id("Path")).value) || "dados/estacionamento.json";
+        const path = $(id("Path")).value.trim() || "dados/estaciomento.json";
         const token = $(id("Token")).value.trim();
 
         if (!owner || !repo || !branch || !path) {
@@ -1201,11 +1191,12 @@
 
       function renderDashboard() {
         renderFilterSelects();
-        const allVehicles = Array.isArray(appData.vehicles) ? appData.vehicles : [];
         const vehicles = filteredVehicles("dashboard");
-
-        $("#totalVehiclesGeneral").textContent = allVehicles.length;
-        $("#totalVehiclesFiltered").textContent = vehicles.length;
+        const today = new Date().toISOString().slice(0, 10);
+        $("#totalVehicles").textContent = vehicles.length;
+        $("#totalCourses").textContent = new Set(vehicles.map(vehicle => vehicle.course).filter(Boolean)).size;
+        $("#totalPhases").textContent = new Set(vehicles.map(vehicle => vehicle.phase).filter(Boolean)).size;
+        $("#totalToday").textContent = vehicles.filter(vehicle => dateOnly(vehicle.createdAt) === today).length;
 
         const courseFilter = $("#dashboardCourseFilter")?.value || "all";
         const phaseFilter = $("#dashboardPhaseFilter")?.value || "all";
@@ -1214,7 +1205,7 @@
         if (phaseFilter !== "all") activeFilters.push(phaseFilter);
         $("#filterBadge").innerHTML = `<i class="fa-solid fa-filter"></i> ${escapeHtml(activeFilters.join(" • ") || "Todos os cadastros")}`;
 
-        renderRanking($("#courseRanking"), countBy(allVehicles, "course"));
+        renderRanking($("#courseRanking"), countBy(vehicles, "course"));
         renderRanking($("#colorRanking"), countBy(vehicles, "carColor"));
       }
 
@@ -1390,7 +1381,7 @@
       }
 
       function exportJson() {
-        downloadText("estacionamento.json", JSON.stringify(state, null, 2), "application/json");
+        downloadText("estaciomento.json", JSON.stringify(state, null, 2), "application/json");
       }
 
       function exportCsv() {
