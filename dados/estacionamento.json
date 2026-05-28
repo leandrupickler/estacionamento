@@ -28,6 +28,19 @@
       "notes": "",
       "createdAt": "2026-05-28T12:00:00.000Z",
       "updatedAt": "2026-05-28T01:23:01.192Z"
+    },
+    {
+      "id": "vehicle_kku1a03",
+      "plate": "KKU1A03",
+      "ownerName": "Anderson ASO FMP",
+      "ownerPhone": "(48) 98872-5775",
+      "carColor": "Cinza",
+      "carModel": "Citroen",
+      "course": "Outro",
+      "phase": "1ª Fase",
+      "notes": "",
+      "createdAt": "2026-05-28T12:00:00.000Z",
+      "updatedAt": "2026-05-28T15:27:03.920Z"
     }
   ]
 }
