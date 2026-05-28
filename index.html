@@ -324,6 +324,7 @@
             <div class="field">
               <label for="loginGithubPath">Arquivo de dados</label>
               <input id="loginGithubPath" type="text" value="dados/estaciomento.json">
+              <span class="mini muted">Use exatamente: dados/estaciomento.json. Evite nomes como estaciomento(1).json.</span>
             </div>
           </div>
 
@@ -579,6 +580,7 @@
               <div class="field">
                 <label for="githubPath">Arquivo de dados</label>
                 <input id="githubPath" type="text" value="dados/estaciomento.json">
+                <span class="mini muted">Use exatamente: dados/estaciomento.json. Evite nomes como estaciomento(1).json.</span>
               </div>
             </div>
 
@@ -867,8 +869,20 @@
         return true;
       }
 
+      function cleanGithubPath(path) {
+        return String(path || "dados/estaciomento.json")
+          .trim()
+          .replace(/\\/g, "/")
+          .replace(/^\/+/, "")
+          .replace(/\/{2,}/g, "/");
+      }
+
+      function githubTargetText() {
+        return `${githubConfig.owner}/${githubConfig.repo}/${githubConfig.branch}/${cleanGithubPath(githubConfig.path)}`;
+      }
+
       function githubUrl() {
-        const path = githubConfig.path.split("/").map(encodeURIComponent).join("/");
+        const path = cleanGithubPath(githubConfig.path).split("/").map(encodeURIComponent).join("/");
         return `https://api.github.com/repos/${encodeURIComponent(githubConfig.owner)}/${encodeURIComponent(githubConfig.repo)}/contents/${path}`;
       }
 
@@ -898,8 +912,9 @@
           });
 
           if (response.status === 404) {
-            updateSyncStatus("error", "Arquivo JSON não encontrado no GitHub.");
-            if (showMessage) toast("Arquivo JSON não encontrado. Envie o dados/estaciomento.json para o repositório ou clique em Enviar para o GitHub.");
+            const target = githubTargetText();
+            updateSyncStatus("error", `JSON não encontrado: ${cleanGithubPath(githubConfig.path)}`);
+            if (showMessage) toast(`JSON não encontrado em ${target}. Confira se o arquivo está exatamente na pasta dados com o nome estaciomento.json.`);
             return false;
           }
 
@@ -1012,7 +1027,7 @@
           if (owner) owner.value = githubConfig.owner || "";
           if (repo) repo.value = githubConfig.repo || "estaciomento";
           if (branch) branch.value = githubConfig.branch || "main";
-          if (path) path.value = githubConfig.path || "dados/estaciomento.json";
+          if (path) path.value = cleanGithubPath(githubConfig.path || "dados/estaciomento.json");
           if (token) token.value = "";
         });
       }
@@ -1022,7 +1037,7 @@
         const owner = $(id("Owner")).value.trim();
         const repo = $(id("Repo")).value.trim() || "estaciomento";
         const branch = $(id("Branch")).value.trim() || "main";
-        const path = $(id("Path")).value.trim() || "dados/estaciomento.json";
+        const path = cleanGithubPath($(id("Path")).value) || "dados/estaciomento.json";
         const token = $(id("Token")).value.trim();
 
         if (!owner || !repo || !branch || !path) {
