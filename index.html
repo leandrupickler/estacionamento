@@ -372,7 +372,7 @@
         <div class="section-title">
           <div>
             <h2>Painel do estacionamento</h2>
-            <p>Resumo dos veículos cadastrados e sincronizados com o arquivo JSON no GitHub.</p>
+            <p>Resumo dos carros cadastrados e sincronizados com o arquivo JSON no GitHub.</p>
           </div>
         </div>
 
@@ -391,28 +391,21 @@
           <div class="sync-badge" id="syncStatusBadge"><i class="fa-brands fa-github"></i> Aguardando sincronização</div>
         </div>
 
-        <div class="grid grid-4">
+        <div class="grid grid-2">
           <article class="card stat-card">
-            <div class="stat-head"><span>Total de veículos</span><span class="icon"><i class="fa-solid fa-car"></i></span></div>
-            <div><div class="stat-value" id="totalVehicles">0</div><p class="stat-note">Placas cadastradas no JSON.</p></div>
+            <div class="stat-head"><span>Total geral de carros</span><span class="icon"><i class="fa-solid fa-car"></i></span></div>
+            <div><div class="stat-value" id="totalVehicles">0</div><p class="stat-note">Total de veículos cadastrados no sistema.</p></div>
           </article>
+
           <article class="card stat-card">
-            <div class="stat-head"><span>Cursos com veículos</span><span class="icon green"><i class="fa-solid fa-graduation-cap"></i></span></div>
-            <div><div class="stat-value" id="totalCourses">0</div><p class="stat-note">Cursos diferentes encontrados.</p></div>
-          </article>
-          <article class="card stat-card">
-            <div class="stat-head"><span>Fases registradas</span><span class="icon yellow"><i class="fa-solid fa-layer-group"></i></span></div>
-            <div><div class="stat-value" id="totalPhases">0</div><p class="stat-note">Fases diferentes no cadastro.</p></div>
-          </article>
-          <article class="card stat-card">
-            <div class="stat-head"><span>Cadastrados hoje</span><span class="icon red"><i class="fa-solid fa-calendar-day"></i></span></div>
-            <div><div class="stat-value" id="totalToday">0</div><p class="stat-note">Novos registros no dia atual.</p></div>
+            <div class="stat-head"><span>Total exibido no filtro</span><span class="icon green"><i class="fa-solid fa-list-check"></i></span></div>
+            <div><div class="stat-value" id="totalFilteredVehicles">0</div><p class="stat-note">Quantidade conforme curso e fase selecionados.</p></div>
           </article>
         </div>
 
         <div class="grid grid-2" style="margin-top:18px;">
           <article class="card">
-            <h3 style="margin:0 0 14px;"><i class="fa-solid fa-chart-simple"></i> Veículos por curso</h3>
+            <h3 style="margin:0 0 14px;"><i class="fa-solid fa-chart-simple"></i> Total por curso cadastrado</h3>
             <div id="courseRanking" class="ranking"></div>
           </article>
 
@@ -1207,11 +1200,10 @@
       function renderDashboard() {
         renderFilterSelects();
         const vehicles = filteredVehicles("dashboard");
-        const today = new Date().toISOString().slice(0, 10);
-        $("#totalVehicles").textContent = vehicles.length;
-        $("#totalCourses").textContent = new Set(vehicles.map(vehicle => vehicle.course).filter(Boolean)).size;
-        $("#totalPhases").textContent = new Set(vehicles.map(vehicle => vehicle.phase).filter(Boolean)).size;
-        $("#totalToday").textContent = vehicles.filter(vehicle => dateOnly(vehicle.createdAt) === today).length;
+        const allVehicles = Array.isArray(state.vehicles) ? state.vehicles : [];
+
+        $("#totalVehicles").textContent = allVehicles.length;
+        $("#totalFilteredVehicles").textContent = vehicles.length;
 
         const courseFilter = $("#dashboardCourseFilter")?.value || "all";
         const phaseFilter = $("#dashboardPhaseFilter")?.value || "all";
